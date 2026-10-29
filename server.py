@@ -1,23 +1,27 @@
+"""Flask web application for emotion detection."""
+
 from flask import Flask, render_template, request
 from EmotionDetection.emotion_detection import emotion_detector
 
 app = Flask(__name__)
 
 @app.route("/")
-def main_page():
+def render_index_page():
+    """Render the main application page."""
     return render_template("index.html")
 
-@app.route("/emotionDetector", methods = ["GET"])
+@app.route("/emotionDetector", methods=["GET"])
 def emotion_detector_route():
+    """Analyze the text supplied to the emotion detector."""
     text_to_analyze = request.args.get("textToAnalyze")
 
-    if not text_to_analyze:
-        return "Invalid input! Please enter a statement."
+    if not text_to_analyze or not text_to_analyze.strip():
+        return "Invalid text! Please try again!"
 
     result = emotion_detector(text_to_analyze)
 
     if not result or result.get("dominant_emotion") is None:
-        return "Invalid input! Please enter a valid statement."
+        return "Invalid input! Please try again!"
 
 
     return (
